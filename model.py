@@ -1,4 +1,3 @@
-from tokenizers import Tokenizer
 from torch import nn
 from torch.utils.data import Dataset
 import torch
@@ -102,7 +101,7 @@ class EmbeddingModel(torch.nn.Module):
             )
 
     def load(self, file_name: str | PathLike[str]):
-        self.addition = torch.load(file_name)
+        self.addition.load_state_dict(torch.load(file_name, map_location=self.device, weights_only=True))
 
     def forward(self, input_ids, attention_mask, *args, **kwargs):
         embedding_output = self.base_model(input_ids, attention_mask, *args, **kwargs)
