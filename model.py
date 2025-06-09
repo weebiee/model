@@ -81,12 +81,12 @@ class EmbeddingModel(torch.nn.Module):
         self.sentiments = sentiments
         self.max_length = max_length
 
-        self.base_model = PoolerModel(model_name, max_length)
+        self.model = PoolerModel(model_name, max_length)
 
-        for para in self.base_model.parameters():
+        for para in self.model.parameters():
             para.requires_grad = False
 
-        self.device = self.base_model.device
+        self.device = self.model.device
         embedding_space = 1536
         self.addition = nn.Sequential(
             nn.Linear(embedding_space, embedding_space),
@@ -104,11 +104,11 @@ class EmbeddingModel(torch.nn.Module):
         self.addition.load_state_dict(torch.load(file_name, map_location=self.device, weights_only=True))
 
     def forward(self, input_ids, attention_mask, *args, **kwargs):
-        embedding_output = self.base_model(input_ids, attention_mask, *args, **kwargs)
+        embedding_output = self.model(input_ids, attention_mask, *args, **kwargs)
         return self.addition(embedding_output)
 
     def gradient_checkpointing_enable(self, *args, **kwargs):
-        self.base_model.gradient_checkpointing_enable(*args, **kwargs)
+        self.model.gradient_checkpointing_enable(*args, **kwargs)
 
     def save(self, file_path: str | PathLike[str]):
         torch.save(self.addition.state_dict(), file_path)
