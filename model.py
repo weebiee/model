@@ -112,3 +112,6 @@ class EmbeddingModel(torch.nn.Module):
 
     def save(self, file_path: str | PathLike[str]):
         torch.save(self.addition.state_dict(), file_path)
+
+
+BEST_PROMPT = 'Instruct: Given the tweet, find the best matching sentiment, be it positive, negative or neutral.\nTweet:'
