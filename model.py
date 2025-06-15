@@ -1,4 +1,5 @@
 from torch import nn
+from torch.nn import functional as F
 from torch.utils.data import Dataset
 import torch
 import json
@@ -90,10 +91,9 @@ class EmbeddingModel(torch.nn.Module):
         embedding_space = 1536
         self.addition = nn.Sequential(
             nn.Linear(embedding_space, embedding_space),
-            nn.ReLU(),
-            nn.Linear(embedding_space, embedding_space),
-            nn.ReLU(),
-            nn.Linear(embedding_space, sentiments)
+            nn.Linear(embedding_space, embedding_space // 3),
+            nn.Linear(embedding_space // 3, embedding_space // 6),
+            nn.Linear(embedding_space // 6, sentiments)
         ).to(device=self.device)
         if addition_path:
             self.addition.load_state_dict(
